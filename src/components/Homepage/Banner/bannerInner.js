@@ -1,7 +1,7 @@
 import React from "react";
 import Banner_search_form from "./banner_search_form";
 
-class Banner_inner extends React.Component {
+class BannerInner extends React.Component {
   render() {
     return (
       <div className="banner_inner">
@@ -30,4 +30,4 @@ class Banner_inner extends React.Component {
   }
 }
 
-export default Banner_inner;
+export default BannerInner;

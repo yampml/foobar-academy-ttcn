@@ -6,7 +6,6 @@
     "axios": "^0.18.0",
     "babel-preset-react": "^6.24.1",
     "chartist": "^0.10.1",
-
     "d3-scale": "^1.0.6",
     "datatables.net-bs": "^1.10.16",
     "datatables.net-responsive": "^2.2.0",
@@ -15,25 +14,23 @@
     "history": "^4.7.2",
     "jquery": "^3.2.1",
     "moment": "^2.18.1",
-
     "node-sass-chokidar": "0.0.3",
     "nouislider": "^10.1.0",
     "npm-run-all": "^4.1.1",
     "perfect-scrollbar": "^0.8.1",
-
     "prop-types": "^15.6.2",
-
+    "react": "^16.6.3",
     "react-big-calendar": "^0.16.1",
     "react-bootstrap": "^0.31.3",
     "react-bootstrap-sweetalert": "^4.0.0",
     "react-bootstrap-switch": "^15.5.1",
     "react-chartist": "^0.13.0",
     "react-datetime": "^2.10.2",
-
+    "react-dom": "^16.6.3",
     "react-notification-system": "^0.2.15",
     "react-redux": "^6.0.0",
     "react-router-dom": "^4.1.2",
-
+    "react-scripts": "2.1.1",
     "react-select": "^1.0.0-rc.10",
     "react-simple-maps": "^0.8.4",
     "react-stepzilla": "^4.6.3",
@@ -42,12 +39,7 @@
     "react_ujs": "^2.4.4",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
-
-    "wnumb": "^1.1.0",
-
-    "react": "^16.6.3",
-    "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1"
+    "wnumb": "^1.1.0"
   },
   "scripts": {
     "start-js": "react-scripts start",

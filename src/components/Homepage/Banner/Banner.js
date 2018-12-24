@@ -1,5 +1,5 @@
 import React from "react";
-import Banner_inner from "./banner_inner";
+import BannerInner from "./bannerInner";
 import banner_backgound from "../../../assets/img/homepage/banner.jpg";
 
 const bannerStyle = {
@@ -10,7 +10,7 @@ const bannerStyle = {
 const Banner = () => {
     return (
       <section className="home_banner_area" style ={bannerStyle}>
-        <Banner_inner />
+        <BannerInner />
       </section>
     );
 }
