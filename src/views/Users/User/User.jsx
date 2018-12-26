@@ -15,10 +15,7 @@ import Card from 'components/Card/Card.jsx';
 
 import Button from 'elements/CustomButton/CustomButton.jsx';
 
-import { RegisterPage } from 'views/Pages/RegisterPage.jsx';
-import callApi from 'reduxStore/apiCaller';
 import { connect } from 'react-redux';
-import * as actions from 'reduxStore/actions/actionsIndex';
 
 class User extends Component {
     constructor(props) {

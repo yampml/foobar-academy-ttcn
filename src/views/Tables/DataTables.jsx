@@ -13,7 +13,6 @@ $.DataTable = require('datatables.net-bs');
 
 const dataTable = {
     headerRow: ['Name', 'Position', 'Office', 'Age', 'Date', 'Actions'],
-    headerSearchRow: ['a', 'b', 'c', 'd', 'e', 'f'],
     footerRow: ['Name', 'Position', 'Office', 'Age', 'Date', 'Actions'],
     dataRows: [
         ['Airi Satou', 'Andrew Mike', 'Develop', '2013', '99,225'],

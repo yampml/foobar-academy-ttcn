@@ -60,7 +60,7 @@ class Sidebar extends Component{
                         <div className="info">
                             <a onClick={ ()=> this.setState({ openAvatar: !this.state.openAvatar })}>
                                 <span>
-                                    {this.props.currentUser.email}
+                                    {this.props.currentUser.user_email}
                                 </span>
                             </a>
                         </div>
