@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Collapse } from 'react-bootstrap';
 import { NavLink } from 'react-router-dom';
-// this is used to create scrollbars on windows devices like the ones from apple devices
-import * as Ps from 'perfect-scrollbar';
+
 import 'perfect-scrollbar/dist/css/perfect-scrollbar.min.css';
 
 import HeaderLinks from 'components/Header/HeaderLinks.jsx';
@@ -61,32 +60,9 @@ class Sidebar extends Component{
                         <div className="info">
                             <a onClick={ ()=> this.setState({ openAvatar: !this.state.openAvatar })}>
                                 <span>
-                                    {this.props.currentUser.email}
-                                    <b className={this.state.openAvatar ? "caret rotate-180":"caret"}></b>
+                                    {this.props.currentUser.user_email}
                                 </span>
                             </a>
-                            <Collapse in={this.state.openAvatar}>
-                                <ul className="nav">
-                                    <li>
-                						<a>
-                							<span className="sidebar-mini">MP</span>
-                							<span className="sidebar-normal">My Profile</span>
-                						</a>
-                					</li>
-                					<li>
-                						<a>
-                							<span className="sidebar-mini">EP</span>
-                							<span className="sidebar-normal">Edit Profile</span>
-                						</a>
-                					</li>
-                					<li>
-                						<a>
-                							<span className="sidebar-mini">S</span>
-                							<span className="sidebar-normal">Settings</span>
-                						</a>
-                					</li>
-                                </ul>
-                            </Collapse>
                         </div>
                     </div>
 

@@ -9,18 +9,9 @@ import {
 import indexRoutes from './routes/index.jsx';
 import registerServiceWorker from './registerServiceWorker';
 
-// import '../assets/css/bootstrap.min.css';
-// import '../assets/sass/light-bootstrap-dashboard.css';
-// import '../assets/css/demo.css';
-// import '../assets/css/pe-icon-7-stroke.css';
-
-// import '../../assets/stylesheets/bootstrap.min.css';
-// import '../../assets/stylesheets/light-bootstrap-dashboard.css';
-// import '../../assets/stylesheets/demo.css';
-// import '../../assets/stylesheets/pe-icon-7-stroke.css';
-
-
 import App from 'containers/App/App.jsx';
+
+
 
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';

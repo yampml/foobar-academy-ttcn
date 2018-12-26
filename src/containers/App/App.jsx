@@ -28,6 +28,7 @@ const AsyncDash = asyncComponent(() => {
     return import('containers/Dash/Dash.jsx');
 })
 
+
 class App extends Component{
     constructor(props) {
       super(props);
@@ -57,7 +58,7 @@ class App extends Component{
                     <Route path="/admin" component={AsyncDash} />
                     {/* {isAllowed(this.props.currentUser, "admin") ? <Route path="/admin" component={AsyncDash} /> : null} */}
                     
-                    <Redirect from="/" to="/admin" />
+                    {/* <Redirect from="/" to="/admin" /> */}
                 </Switch>
             )
         }

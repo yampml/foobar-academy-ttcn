@@ -47,20 +47,19 @@ export const auth = (email, password) => {
         dispatch(authStart());
         
         const authData = {
-            login_email: email,
-            login_password: password
+            email: email,
+            password: password
         };
         //url tào lao
         // let url = "https://5c0f8c30fc4df20013083a63.mockapi.io/foobaripa/user";
-        let url = "http://localhost:3001/sessions/"
+        let url = "https://api-english-academy.herokuapp.com/auth"
         axios.post(url, authData)
         .then(response => {
             console.log(response.data);
-            console.log("foobar");
-            sessionStorage.setItem('token', response.data.remember_digest);
-            sessionStorage.setItem('userId', response.data.id);
-            sessionStorage.setItem('currentUser', JSON.stringify(response.data));
-            dispatch(authSuccess(response.data.remember_digest, response.data.id, response.data));
+            sessionStorage.setItem('token', response.data.token);
+            sessionStorage.setItem('userId', response.data.userId);
+            sessionStorage.setItem('currentUser', JSON.stringify(response.data.userData));
+            dispatch(authSuccess(response.data.auth_token, response.data.id, response.data));
         })
         .catch(err => {
           dispatch(authFail(true));
