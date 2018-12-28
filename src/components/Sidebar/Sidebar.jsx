@@ -78,6 +78,7 @@ class Sidebar extends Component{
                         */}
                         {
                             dashRoutes.map((prop,key) => {
+                                if(prop.hide) return null;
                                 var st = {};
                                 st[prop["state"]] = !this.state[prop.state];
                                 if(prop.collapse){
