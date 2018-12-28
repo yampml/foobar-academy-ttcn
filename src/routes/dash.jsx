@@ -21,6 +21,8 @@ import Calendar from 'views/Calendar/Calendar.jsx';
 import UserPage from 'views/Pages/UserPage.jsx';
 import Users from 'views/Users/Users.jsx'
 import ManageCourse from 'views/ManageCourse/ManageCourse.jsx';
+import ClassDetail from 'views/ManageClass/ClassDetail.jsx';
+import ClassAdd from 'views/ManageClass/ClassAdd.jsx';
 import ManageClass from 'views/ManageClass/ManageClass.jsx';
 import ManagePopular from 'views/ManagePopular/ManagePopular.jsx';
 import ManageEvent from 'views/ManageEvent/ManageEvent.jsx'
@@ -37,6 +39,8 @@ var dashRoutes = [
     { path: "/admin/manageInvoice", name: "Manage Invoice", icon: "pe-7s-piggy", component: Invoices },
     { path: "/admin/manageCourses", name: "Manage Courses", icon: "pe-7s-graph", component: ManageCourse },
     { path: "/admin/manageClass", name: "Manage Class", icon: "pe-7s-graph", component: ManageClass },
+    // { path: "/admin/manageClass", name: "Manage Class", icon: "pe-7s-graph", component: ManageClass },
+    { path: "/admin/classDetail/:id", hide: true, name: "Class Detail", icon: "pe-7s-graph", component: ClassDetail },
     { path: "/admin/managePopular", name: "Manage CLGT", icon: "pe-7s-graph", component: ManagePopular },
     { path: "/admin/manageEvent", name: "Manage Events", icon: "pe-7s-piggy", component: ManageEvent },
     { collapse: true, path: "/admin/components", name: "Components", state: "openComponents", icon: "pe-7s-plugin", views:[

@@ -20,6 +20,10 @@ import dashRoutes from 'routes/dash.jsx';
 
 // style for notifications
 import { style } from "variables/Variables.jsx";
+// import 'assets/css/light-bootstrap-dashboard.css';
+// import 'assets/css/bootstrap.min.css';
+// import 'assets/css/demo.css';
+// import 'assets/css/pe-icon-7-stroke.css';
 
 class Dash extends Component{
     constructor(props){
