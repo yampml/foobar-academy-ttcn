@@ -25,10 +25,10 @@ export const authFail = (error) => {
 };
 
 export const logout = () => {
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('expirationDate');
-    sessionStorage.removeItem('userId');   
-    sessionStorage.removeItem('currentUser');
+    localStorage.removeItem('token');
+    localStorage.removeItem('expirationDate');
+    localStorage.removeItem('userId');   
+    localStorage.removeItem('currentUser');
     return {
         type: actionTypes.AUTH_LOGOUT
     }
@@ -56,9 +56,9 @@ export const auth = (email, password) => {
         axios.post(url, authData)
         .then(response => {
             console.log(response.data);
-            sessionStorage.setItem('token', response.data.token);
-            sessionStorage.setItem('userId', response.data.userId);
-            sessionStorage.setItem('currentUser', JSON.stringify(response.data.userData));
+            localStorage.setItem('token', response.data.token);
+            localStorage.setItem('userId', response.data.userId);
+            localStorage.setItem('currentUser', JSON.stringify(response.data.userData));
             dispatch(authSuccess(response.data.auth_token, response.data.id, response.data));
         })
         .catch(err => {
@@ -77,16 +77,16 @@ export const setAuthRedirectPath = (path) => {
 
 export const authCheckState = () => {
     return dispatch => {
-        const token = sessionStorage.getItem('token');
+        const token = localStorage.getItem('token');
         if(!token) {
             dispatch(logout());
         } else {
-            // const expirationDate = new Date(sessionStorage.getItem('expirationDate'));
+            // const expirationDate = new Date(localStorage.getItem('expirationDate'));
             // if (expirationDate <= new Date()) {
                 // dispatch(logout());
             // } else {
-                const userId = sessionStorage.getItem('userId');
-                const userData = JSON.parse(sessionStorage.getItem('currentUser'));
+                const userId = localStorage.getItem('userId');
+                const userData = JSON.parse(localStorage.getItem('currentUser'));
                 dispatch(authSuccess(token, userId, userData));
                 // dispatch(checkAuthTimeout((expirationDate.getTime() - new Date().getTime())/1000));
             // }

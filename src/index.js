@@ -6,13 +6,9 @@ import {
     Switch
 } from 'react-router-dom';
 
-import indexRoutes from './routes/index.jsx';
 import registerServiceWorker from './registerServiceWorker';
 
 import App from 'containers/App/App.jsx';
-
-
-
 import thunk from 'redux-thunk';
 import { Provider } from 'react-redux';
 import { createStore, applyMiddleware, compose, combineReducers } from 'redux';
