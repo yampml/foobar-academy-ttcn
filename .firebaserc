@@ -1,0 +1,6 @@
+{
+  "projects": {
+    "academy": "foobar-academy",
+    "default": "foobar-academy"
+  }
+}

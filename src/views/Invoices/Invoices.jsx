@@ -37,9 +37,9 @@ class Invoices extends Component {
   }
 
   componentDidMount() {
-    callApi('invoices', 'GET', null).then(res => {
-      this.setState({ invoiceList: res.data });
-    })
+    // callApi('invoices', 'GET', null).then(res => {
+    //   this.setState({ invoiceList: res.data });
+    // })
   }
   onDelete = (id) => {
     callApi('invoices/' + id, 'DELETE', null).then(res => {

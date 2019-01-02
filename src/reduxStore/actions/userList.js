@@ -9,7 +9,7 @@ export const updateUserList = (userList) => {
 }
 
 export const fetchUserFromDB = () => {
-  const auth_token = sessionStorage.getItem('token');
+  const auth_token = localStorage.getItem('token');
   return dispatch => {
     let url = "https://api-english-academy.herokuapp.com/users";
     axios.get(url, {
