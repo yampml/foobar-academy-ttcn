@@ -26,7 +26,7 @@ import ClassAdd from 'views/ManageClass/ClassAdd.jsx';
 import ManageClass from 'views/ManageClass/ManageClass.jsx';
 import ManagePopular from 'views/ManagePopular/ManagePopular.jsx';
 import ManageEvent from 'views/ManageEvent/ManageEvent.jsx'
-import Invoices from '../views/Invoices/Invoices';
+import ManageInvoice from '../views/Invoices/ManageInvoice.jsx';
 import User from '../views/Users/User/User.jsx';
 import pagesRoutes from './pages.jsx';
 import DangKy from 'views/Users/User/DangKy.jsx';
@@ -41,7 +41,7 @@ var dashRoutes = [
     { path: "/admin/dashboard", name: "Dashboard", icon: "pe-7s-graph", component: Dashboard },
     { path: "/admin/manageUser/registerAccount/", name: "Manage User", hide: true, icon: "pe-7s-study", component: DangKy },
     { path: "/admin/manageUser", name: "Manage User", icon: "pe-7s-study", component: ManageUser },
-    { path: "/admin/manageInvoice", name: "Manage Invoice", icon: "pe-7s-piggy", component: Invoices },
+    { path: "/admin/manageInvoice", name: "Manage Invoice", icon: "pe-7s-piggy", component: ManageInvoice },
     { path: "/admin/manageCourses", name: "Manage Courses", icon: "pe-7s-graph", component: ManageCourse },
     { path: "/admin/manageClass", name: "Manage Class", icon: "pe-7s-graph", component: ManageClass },
     // { path: "/admin/manageClass", name: "Manage Class", icon: "pe-7s-graph", component: ManageClass },
