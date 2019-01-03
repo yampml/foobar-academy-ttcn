@@ -159,6 +159,7 @@ class ManageEvent extends Component {
                       .draw();
               }
           } );
+          return true;
         } );
     }
     componentWillUnmount() {

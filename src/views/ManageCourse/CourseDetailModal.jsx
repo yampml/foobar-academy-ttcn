@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 
+import DualListBox from 'react-dual-listbox';
 import {
     Grid, Row, Col, ButtonToolbar,
     Modal, Form, FormGroup, ControlLabel, FormControl, Button
@@ -9,6 +10,8 @@ import axios from 'axios';
 import ReactLoading from 'react-loading';
 import Datetime from 'react-datetime';
 import $ from 'jquery';
+
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 
 require('datatables.net-responsive');
 $.DataTable = require('datatables.net-bs');
@@ -26,15 +29,42 @@ class CourseDetailModal extends Component {
                 danhSachLopHoc: []
             },
             isEdit: false,
-            isLoading: true
+            isLoading: true,
+
+
+
+            options: [
+            ],
+
+            selected: [],
         }
     }
 
 
     fetchData = () => {
+
         let url = "https://api-english-academy.herokuapp.com/courses/" + this.props.courseId;
+
+        axios.get("https://api-english-academy.herokuapp.com/class-rooms").then(response2 => {
+            response2.data.map((cl, index) => {
+                let dataa = response2.data.slice();
+                dataa = dataa.filter(o => o.course_id == 0);
+                let newOptions = dataa.map((cl, index) => {
+                    return {
+                        value: cl.id.toString(),
+                        label: cl.name
+                    }
+                })
+
+                this.setState({
+                    options: newOptions,
+                })
+            })
+
+        })
+
         axios.get(url).then(response => {
-            // console.log(response.data);
+            console.log(response.data);
             let fetchedCourseData = {
                 id: response.data.courseData[0].id,
                 ten: response.data.courseData[0].name,
@@ -42,11 +72,29 @@ class CourseDetailModal extends Component {
                 thoiGianHoc: response.data.courseData[0].duration,
                 danhSachLopHoc: response.data.courseClass
             }
+
+
+            let newOptions = this.state.options.slice();
+            console.log(newOptions)
+            response.data.courseClass.map((cl, index) => {
+                newOptions.push({
+                    value: cl.id.toString(),
+                    label: cl.name
+                })
+                return null;
+            })
+
+            let newSelected = response.data.courseClass.map((cl, index) => {
+                return cl.id.toString()
+            })
+
             // console.log(fetchedCourseData)
             this.setState({
                 courseData: fetchedCourseData,
                 isLoading: false,
-                isEdit: false
+                isEdit: false,
+                options: newOptions,
+                selected: newSelected
             })
         }).catch(err => {
 
@@ -55,13 +103,15 @@ class CourseDetailModal extends Component {
 
     onUpdate = () => {
         let url = "https://api-english-academy.herokuapp.com/courses/" + this.props.courseId;
-        console.log(url);
+        // console.log(url);
         let newCourseData = {
             name: this.state.courseData.ten,
             fee: parseInt(this.state.courseData.hocPhi),
             duration: parseInt(this.state.courseData.thoiGianHoc)
+            //update list class
+            
         };
-        this.setState({isLoading: true});
+        this.setState({ isLoading: true });
 
         const headers = {
             'Content-Type': 'application/json',
@@ -72,7 +122,7 @@ class CourseDetailModal extends Component {
             console.log(err.message);
         })
         this.fetchData();
-        this.setState({isLoading: false, isEdit: false })
+        this.setState({ isLoading: false, isEdit: false })
     }
 
     handleCancelBtnClick = () => {
@@ -120,7 +170,7 @@ class CourseDetailModal extends Component {
                                 <FormGroup>
                                     <ControlLabel className="col-md-3" >
                                         Tên khóa học
-                            </ControlLabel>
+                                    </ControlLabel>
                                     <Col md={ 9 }>
                                         <FormControl
                                             type="text"
@@ -133,7 +183,7 @@ class CourseDetailModal extends Component {
                                 <FormGroup>
                                     <ControlLabel className="col-md-3">
                                         Thời gian học
-                            </ControlLabel>
+                                    </ControlLabel>
                                     <Col md={ 9 }>
                                         <FormControl
                                             type="text"
@@ -146,7 +196,7 @@ class CourseDetailModal extends Component {
                                 <FormGroup>
                                     <ControlLabel className="col-md-3">
                                         Học phí
-                            </ControlLabel>
+                                    </ControlLabel>
                                     <Col md={ 9 }>
                                         <FormControl
                                             type="text"
@@ -156,17 +206,27 @@ class CourseDetailModal extends Component {
                                         />
                                     </Col>
                                 </FormGroup>
+
                                 <FormGroup>
                                     <ControlLabel className="col-md-3">
                                         Danh sách lớp
-                            </ControlLabel>
+                                            </ControlLabel>
                                     <Col md={ 9 }>
                                         {
-                                            this.state.courseData.danhSachLopHoc.map((lop, index) => {
-                                                if (index !== this.state.courseData.danhSachLopHoc.length)
-                                                    return (<Link to="/#" key={ index }>{ lop.name }, </Link>)
-                                                else return (<Link to="/#" key={ index }>{ lop.name }</Link>)
-                                            })
+                                            !this.state.isEdit ?
+                                                this.state.courseData.danhSachLopHoc.map((lop, index) => {
+                                                    if (index !== this.state.courseData.danhSachLopHoc.length)
+                                                        return (<Link to="/#" key={ index }>{ lop.name }, </Link>)
+                                                    else return (<Link to="/#" key={ index }>{ lop.name }</Link>)
+                                                }) :
+                                                <DualListBox
+                                                    options={ this.state.options }
+                                                    selected={ this.state.selected }
+                                                    onChange={ (selected) => {
+
+                                                        this.setState({ selected });
+                                                    } }
+                                                />
                                         }
                                     </Col>
                                 </FormGroup>

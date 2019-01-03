@@ -3,11 +3,8 @@ import {
     Switch,
     Route,
     Redirect,
-    withRouter
 } from 'react-router-dom';
 
-// dinamically create app routes
-import appRoutes from 'routes/app.jsx';
 
 import { connect } from 'react-redux';
 import * as actions from '../../reduxStore/actions/actionsIndex.js';
@@ -15,7 +12,6 @@ import * as actions from '../../reduxStore/actions/actionsIndex.js';
 
 import asyncComponent from '../HOC/asyncComponent';
 
-import { isAllowed } from '../../reduxStore/utility';
 const AsyncPages = asyncComponent(() => {
     return import('containers/Pages/Pages.jsx');
 })
@@ -26,10 +22,6 @@ const AsyncDash = asyncComponent(() => {
 
 
 class App extends Component{
-    constructor(props) {
-      super(props);
-    }
-
     componentDidMount() {
       this.props.checkSignIn();
       this.props.fetchUsers();

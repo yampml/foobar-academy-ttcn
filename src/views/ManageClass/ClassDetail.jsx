@@ -12,7 +12,7 @@ import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import ReactLoading from "react-loading";
 import * as actions from '../../reduxStore/actions/actionsIndex';
-
+import axios from 'axios';
 import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
@@ -34,6 +34,23 @@ class ClassDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
+            course_id: null,
+            id: null,
+            listStudentIDs: [],
+            listTeacherIDs: [],
+            listTimetableIDs: [],
+            classroomName: null,
+
+            courseData_id: null,
+            courseData_fee: null,
+            courseData_duration: null,
+            courseData_name: null,
+
+            listStudentData: [],
+            listTeacherData: [],
+
+            timetableData: [],
+
             lopID: 1,
             tenLop: "Foo",
             idKhoaHoc: 69,
@@ -75,7 +92,7 @@ class ClassDetail extends Component {
                 }
             ],
             isLoading: false,
-            isEdit: true,
+            isEdit: false,
 
             thongBao: [
                 {
@@ -111,8 +128,109 @@ class ClassDetail extends Component {
         this.hideAlert = this.hideAlert.bind(this);
     }
 
-    componentDidMount() {
-        $("#dsHocSinhdatatables").DataTable({
+    handleChange = name => event => {
+        this.setState({
+            [name]: event.target.value
+        })
+    }
+
+
+
+    fetchData = async () => {
+        let url = "https://api-english-academy.herokuapp.com/class-rooms/" + this.props.match.params.id;
+
+        await axios.get(url)
+            .then((response) => {
+                
+                let data = { ...response.data };
+                this.setState({
+                    course_id: data.course_id,
+                    id: data.id,
+                    listStudentIDs: data.listStudentIDs,
+                    listTeacherIDs: data.listTeacherIDs,
+                    listTimetableIDs: data.listTimetableIDs,
+                    classroomName: data.name,
+                })
+
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+
+        await axios.get("https://api-english-academy.herokuapp.com/courses/" + this.state.course_id)
+            .then((response) => {
+                let data = { ...response.data.courseData[0] };
+                let courseData = {
+                    courseData_id: data.id,
+                    courseData_fee: data.fee,
+                    courseData_duration: data.duration,
+                    courseData_name: data.name
+                }
+                this.setState({
+                    ...courseData
+                })
+
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+
+
+        const auth_token = localStorage.getItem('token');
+        await axios.get("https://api-english-academy.herokuapp.com/users/", {
+            headers: {
+                Authorization: 'Bearer ' + auth_token
+            }
+        })
+            .then((response) => {
+                let userList = response.data;
+                let studentList = userList.filter(o => o.role === 'student');
+                let teacherList = userList.filter(o => o.role === 'teacher');
+
+                let fixedStudentList = studentList.map((st, index) => {
+                    return {
+                        name: st.name,
+                        email: st.email,
+                        phone: st.phone
+                    }
+                })
+                let fixedTeacherList = teacherList.map((st, index) => {
+                    return {
+                        name: st.name,
+                        email: st.email,
+                        phone: st.phone
+                    }
+                })
+                this.setState({
+                    listStudentData: fixedStudentList,
+                    listTeacherData: fixedTeacherList
+                })
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+
+        await axios.get("https://api-english-academy.herokuapp.com/timetables/", {
+            headers: {
+                Authorization: 'Bearer ' + auth_token
+            }
+        })
+            .then((response) => {
+                
+                let timetableList = response.data.slice();
+                let timetableData = timetableList.filter(o => this.state.listTimetableIDs.includes(o.id) );
+                
+                this.setState({
+                    timetableData
+                })
+
+
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+
+        await $("#dsHocSinhdatatables").DataTable({
             "pagingType": "full_numbers",
             "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
             // "searching": false,
@@ -158,10 +276,16 @@ class ClassDetail extends Component {
                 }
             });
         });
+
+    }
+
+
+    componentDidMount() {
+        this.fetchData();
     }
 
     jsonDataToTable = () => {
-        let data = this.state.danhSachHocSinh;
+        let data = this.state.listStudentData;
         let tableRows = data.map((row, index) => {
             return Object.values(row)
         })
@@ -221,7 +345,7 @@ class ClassDetail extends Component {
         const tabsIcons = (
             <Tab.Container id="tabs-with-dropdown" defaultActiveKey="thongBao">
                 <Row className="clearfix">
-                    <Col md ={ 12 }>
+                    <Col md={ 12 }>
                         <Nav bsStyle="tabs">
                             <NavItem eventKey="thongBao">
                                 <i className="fa fa-info"></i> Thông báo
@@ -237,20 +361,20 @@ class ClassDetail extends Component {
                             </NavItem>
                         </Nav>
                     </Col>
-                    <Col md ={ 12 }>
+                    <Col md={ 12 }>
                         <Tab.Content animation>
                             <Tab.Pane eventKey="thongBao">
                                 {
                                     this.state.thongBao.map((tb, index) => {
                                         return (
-                                            <div className="typo-line" key={index}>
-                                                <p className="category" >{tb.thoiGian}</p>
+                                            <div className="typo-line" key={ index }>
+                                                <p className="category" >{ tb.thoiGian }</p>
                                                 <blockquote>
                                                     <p>
-                                                        {tb.noiDung}
+                                                        { tb.noiDung }
                                                     </p>
                                                     <small>
-                                                        {tb.nguoiDang}
+                                                        { tb.nguoiDang }
                                                     </small>
                                                 </blockquote>
                                             </div>
@@ -267,7 +391,7 @@ class ClassDetail extends Component {
                                                 <th>{ dsHocSinhDataTable.headerRow[1] }</th>
                                                 <th>{ dsHocSinhDataTable.headerRow[2] }</th>
                                                 {/* <th>{ dsHocSinhDataTable.headerRow[3] }</th> */ }
-                                                <th className="disabled-sorting text-right">{ dsHocSinhDataTable.headerRow[3] }</th>
+                                                {/* <th className="disabled-sorting text-right">{ dsHocSinhDataTable.headerRow[3] }</th> */ }
                                             </tr>
                                         </thead>
                                         <tfoot style={ { display: "table-header-group" } }>
@@ -277,7 +401,7 @@ class ClassDetail extends Component {
                                                 <th>{ dsHocSinhDataTable.footerRow[2] }</th>
                                                 {/* <th>{ dsHocSinhDataTable.footerRow[3] }</th> */ }
                                                 {/* <th>{ dataTable.footerRow[4] }</th> */ }
-                                                <th></th>
+                                                {/* <th></th> */ }
                                                 {/* <th className="text-right">{ dataTable.footerRow[5] }</th> */ }
                                             </tr>
                                         </tfoot>
@@ -293,10 +417,10 @@ class ClassDetail extends Component {
                                                                     );
                                                                 })
                                                             }
-                                                            <td className="text-right">
+                                                            {/* <td className="text-right">
                                                                 <a className="btn btn-simple btn-info btn-icon"><i className="glyphicon glyphicon-folder-open" onClick={ () => this.handleShowCourseModal(prop[0]) }></i></a>
                                                                 <a className="btn btn-simple btn-danger btn-icon remove"><i className="fa fa-times" onClick={ () => this.onDelete(prop[0]) }></i></a>
-                                                            </td>
+                                                            </td> */}
                                                         </tr>
                                                     )
                                                 })
@@ -306,6 +430,13 @@ class ClassDetail extends Component {
                                 </div>
                             </Tab.Pane>
                             <Tab.Pane eventKey="lichHoc">
+                                <h1>Constructing...</h1>
+                                {
+                                    this.state.timetableData.map((ele, index) => {
+                                        return <p>{ele.id}  {ele.weekday}  {ele.start_time}  {ele.end_time}</p>
+                                    })
+                                }
+                                
                                 <Card
                                     calendar
                                     content={
@@ -322,7 +453,7 @@ class ClassDetail extends Component {
                                 />
                             </Tab.Pane>
                             <Tab.Pane eventKey="diemDanh">
-                                Explore a wide variety of styles, personalise your finishes, and let us design the perfect home for you. It's what we do best and you can see proof in the products and reviews below.
+                                Constructinggg..
                             </Tab.Pane>
                         </Tab.Content>
                     </Col>
@@ -345,7 +476,7 @@ class ClassDetail extends Component {
                     <Row>
                         <Col md={ 12 }>
                             <Card
-                                title={"Lớp học " + this.state.tenLop}
+                                title={ "Lớp học " + this.state.tenLop }
                                 content={
                                     <div>
                                         {
@@ -359,7 +490,7 @@ class ClassDetail extends Component {
                                                             <Col md={ 4 }>
                                                                 <FormControl
                                                                     type="text"
-                                                                    value={ this.state.tenLop }
+                                                                    value={ this.state.classroomName }
                                                                     onChange={ (event) => this.setState({ tenLop: event.target.value }) }
                                                                     disabled={ !this.state.isEdit }
                                                                 />
@@ -372,7 +503,7 @@ class ClassDetail extends Component {
                                                             <Col md={ 4 }>
                                                                 <FormControl
                                                                     type="text"
-                                                                    value={ this.state.tenKhoaHoc }
+                                                                    value={ this.state.courseData_name }
                                                                     onChange={ (event) => this.setState({ tenKhoaHoc: event.target.value }) }
                                                                     disabled={ !this.state.isEdit }
                                                                 />
@@ -385,10 +516,10 @@ class ClassDetail extends Component {
                                                             <Col md={ 4 }>
                                                                 <Col md={ 9 } style={ { padding: "10px 12px" } }>
                                                                     {
-                                                                        this.state.danhSachGiangVien.map((gv, index) => {
+                                                                        this.state.listTeacherData.map((gv, index) => {
                                                                             if (index !== this.state.danhSachGiangVien.length - 1)
-                                                                                return (<Link to="/#" key={ index }>{ gv.tenGiangVien }, </Link>)
-                                                                            else return (<Link to="/#" key={ index }>{ gv.tenGiangVien }</Link>)
+                                                                                return (<Link to="#" key={ index }>{ gv.name }, </Link>)
+                                                                            else return (<Link to="#" key={ index }>{ gv.name }</Link>)
                                                                         })
                                                                     }
                                                                 </Col>

@@ -8142,6 +8142,11 @@ nan@^2.10.0, nan@^2.9.2:
   resolved "https://registry.yarnpkg.com/nan/-/nan-2.12.0.tgz#9d443fdb5e13a20770cc5e602eee59760a685885"
   integrity sha512-zT5nC0JhbljmyEf+Z456nvm7iO7XgRV2hYxoBtPpnyp+0Q4aCoP6uWNn76v/I6k2kCYNLWqWbwBWQcjsNI/bjw==
 
+nanoid@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-2.0.0.tgz#e1ab4a4b024a38d15531ba34a712a201540de639"
+  integrity sha512-SG2qscLE3iM4C0CNzGrsAojJHSVHMS1J8NnvJ31P1lH8P0hGHOiafmniNJz6w6q7vuoDlV7RdySlJgtqkFEVtQ==
+
 nanomatch@^1.2.9:
   version "1.2.13"
   resolved "https://registry.yarnpkg.com/nanomatch/-/nanomatch-1.2.13.tgz#b87a8aa4fc0de8fe6be88895b38983ff265bd119"
@@ -10103,6 +10108,16 @@ react-dom@^16.6.3:
     object-assign "^4.1.1"
     prop-types "^15.6.2"
     scheduler "^0.11.2"
+
+react-dual-listbox@^1.4.2:
+  version "1.4.2"
+  resolved "https://registry.yarnpkg.com/react-dual-listbox/-/react-dual-listbox-1.4.2.tgz#9da75a8e2e1b536ff946c3cbb4d2d0a7ba3cdc18"
+  integrity sha512-deHSLcmdrxzsMOX2XZJm6fRy1tgnpL1/eLC3zDLXJqfm/9Z/VD/5y+qhD0G6iNSTp+s8RAHN+MdxZDvGMBK1rg==
+  dependencies:
+    classnames "^2.2.5"
+    lodash "^4.17.5"
+    nanoid "^2.0.0"
+    prop-types "^15.5.8"
 
 react-error-overlay@^5.1.0:
   version "5.1.0"

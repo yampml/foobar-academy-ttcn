@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
     Grid, Row, Col
@@ -10,20 +9,16 @@ import Button from 'elements/CustomButton/CustomButton.jsx';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
-import Datetime from 'react-datetime';
 import $ from 'jquery';
 
-import * as actions from '../../reduxStore/actions/actionsIndex';
 import Card from 'components/Card/Card.jsx';
 
-// import CourseDetailModal from './CourseDetailModal';
 import AddInvoiceModal from './AddInvoiceModal';
 
 import ReactExport from "react-data-export";
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 // DataTables.net plugin - creates a tables with actions on it
 require('datatables.net-responsive');
