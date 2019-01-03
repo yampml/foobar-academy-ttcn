@@ -141,7 +141,7 @@ class ManageClass extends Component {
 
   fetchData = async () => {
     let url = "https://api-english-academy.herokuapp.com/class-rooms";
-
+    await this.setState({ isLoading: true });
     await axios.get("https://api-english-academy.herokuapp.com/courses/")
       .then(res => {
         let course_data = res.data.tableData.data.slice();
@@ -168,59 +168,58 @@ class ManageClass extends Component {
         newTableData.data = newTableDataWithCourseName;
         this.setState({ tableData: newTableData, isLoading: false });
 
-
-
-        $("#datatables").DataTable({
-          "pagingType": "full_numbers",
-          "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
-          // "searching": false,
-          // "ordering": false,
-          retrieve: true,
-          responsive: true,
-          language: {
-            "decimal": "",
-            "emptyTable": "Không có dữ liệu",
-            "info": "Đang hiển thị từ _START_ đến _END_ trong tổng cộng _TOTAL_ mục",
-            "infoEmpty": "Đang hiển thị từ 0 đến 0 trong tổng cộng 0 mục",
-            "infoFiltered": "đã lọc tổng cộng _MAX_ mục)",
-            "infoPostFix": "",
-            "thousands": ",",
-            "lengthMenu": "Hiển thị _MENU_ mục",
-            "loadingRecords": "Đang load...",
-            "processing": "Đang xử lý...",
-            "zeroRecords": "Không tìm thấy mục nào",
-            "paginate": {
-              "first": "Trang đầu",
-              "last": "Trang cuối",
-              "next": "Trang tiếp",
-              "previous": "Trang trước"
-            },
-            search: "_INPUT_",
-            searchPlaceholder: "Tìm kiếm tất cả",
-          }
-        });
-        var table = $('#datatables').DataTable();
-
-        $('#datatables tfoot th').each(function () {
-          var title = $(this).text();
-          if (title !== '') $(this).html('<input id="" type="text" placeholder="Tìm theo ' + title + '" />');
-        });
-
-        table.columns().every(function () {
-          var that = this;
-          $('input', this.footer()).on('keyup change', function () {
-            if (that.search() !== this.value) {
-              that
-                .search(this.value)
-                .draw();
-            }
-          });
-        });
-
       })
       .catch(err => {
         alert(err.message);
       })
+
+      await $("#datatables").DataTable({
+        "pagingType": "full_numbers",
+        "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
+        // "searching": false,
+        // "ordering": false,
+        retrieve: true,
+        responsive: true,
+        language: {
+          "decimal": "",
+          "emptyTable": "Không có dữ liệu",
+          "info": "Đang hiển thị từ _START_ đến _END_ trong tổng cộng _TOTAL_ mục",
+          "infoEmpty": "Đang hiển thị từ 0 đến 0 trong tổng cộng 0 mục",
+          "infoFiltered": "đã lọc tổng cộng _MAX_ mục)",
+          "infoPostFix": "",
+          "thousands": ",",
+          "lengthMenu": "Hiển thị _MENU_ mục",
+          "loadingRecords": "Đang load...",
+          "processing": "Đang xử lý...",
+          "zeroRecords": "Không tìm thấy mục nào",
+          "paginate": {
+            "first": "Trang đầu",
+            "last": "Trang cuối",
+            "next": "Trang tiếp",
+            "previous": "Trang trước"
+          },
+          search: "_INPUT_",
+          searchPlaceholder: "Tìm kiếm tất cả",
+        }
+      });
+      var table = $('#datatables').DataTable();
+
+      $('#datatables tfoot th').each(function () {
+        var title = $(this).text();
+        if (title !== '') $(this).html('<input id="" type="text" placeholder="Tìm theo ' + title + '" />');
+      });
+
+      table.columns().every(function () {
+        var that = this;
+        $('input', this.footer()).on('keyup change', function () {
+          if (that.search() !== this.value) {
+            that
+              .search(this.value)
+              .draw();
+          }
+        });
+      });
+    await this.setState({ isLoading: false });
 
 
   }

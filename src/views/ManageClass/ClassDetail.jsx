@@ -17,7 +17,9 @@ import BigCalendar from 'react-big-calendar';
 import moment from 'moment';
 import SweetAlert from 'react-bootstrap-sweetalert';
 import { events } from 'variables/Variables.jsx';
-
+import DualListBox from 'react-dual-listbox';
+import Select from 'react-select';
+import 'react-dual-listbox/lib/react-dual-listbox.css';
 BigCalendar.setLocalizer(
     BigCalendar.momentLocalizer(moment)
 );
@@ -34,18 +36,21 @@ class ClassDetail extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            course_id: null,
-            id: null,
+            course_id: "",
+            id: "",
             listStudentIDs: [],
             listTeacherIDs: [],
             listTimetableIDs: [],
-            classroomName: null,
+            classroomName: "",
 
-            courseData_id: null,
-            courseData_fee: null,
-            courseData_duration: null,
-            courseData_name: null,
-
+            all_courses: [],
+            courses_selecting: "",
+            courses_select_options: [], // {value: "", label: ""}
+            courseData_id: "",
+            courseData_fee: "",
+            courseData_duration: "",
+            courseData_name: "",
+            
             listStudentData: [],
             listTeacherData: [],
 
@@ -59,38 +64,8 @@ class ClassDetail extends Component {
             // buoiHocIds: 1,2,3,4 // cai nay tao database buoi hoc luon, 3 column thoi, id, timeStart, timeEnd, dai loai the
 
             tenKhoaHoc: "FooKhoaHoc",
-            danhSachHocSinh: [
-                {
-                    id: 1,
-                    tenHocSinh: "NDA",
-                    sdt: "0123456789",
-                },
-                {
-                    id: 2,
-                    tenHocSinh: "Hiu",
-                    sdt: "0123456789",
-                },
-                {
-                    id: 3,
-                    tenHocSinh: "Xinh",
-                    sdt: "0123456789",
-                },
-                {
-                    id: 4,
-                    tenHocSinh: "NDA",
-                    sdt: "0123456789",
-                }
-            ],
-            danhSachGiangVien: [
-                {
-                    id: 3,
-                    tenGiangVien: "Xinh",
-                },
-                {
-                    id: 4,
-                    tenGiangVien: "NDA",
-                }
-            ],
+
+            danhSachGiangVien: [],
             isLoading: false,
             isEdit: false,
 
@@ -122,7 +97,13 @@ class ClassDetail extends Component {
             ],
 
             events: events,
-            alert: null
+            alert: null,
+
+            teacher_options: [],
+            teacher_selected: [],
+
+            student_options: [],
+            student_selected: [],
         };
 
         this.hideAlert = this.hideAlert.bind(this);
@@ -139,9 +120,10 @@ class ClassDetail extends Component {
     fetchData = async () => {
         let url = "https://api-english-academy.herokuapp.com/class-rooms/" + this.props.match.params.id;
 
+        await this.setState({ isLoading: true });
         await axios.get(url)
             .then((response) => {
-                
+
                 let data = { ...response.data };
                 this.setState({
                     course_id: data.course_id,
@@ -172,7 +154,23 @@ class ClassDetail extends Component {
 
             })
             .catch(err => {
-                alert(err.message);
+                console.log(err.message);
+            })
+
+        await axios.get("https://api-english-academy.herokuapp.com/courses/")
+            .then(response => {
+                let all_courses = response.data.tableData.data.slice();
+                let courses_select_options = all_courses.map((el, index) => {
+                    return {
+                        value: el.id,
+                        label: el.name
+                    }
+                })
+                let courses_selecting = this.state.course_id;
+                this.setState({ all_courses, courses_select_options, courses_selecting });
+
+            }).catch(err => {
+                console.log(err.message);
             })
 
 
@@ -186,15 +184,43 @@ class ClassDetail extends Component {
                 let userList = response.data;
                 let studentList = userList.filter(o => o.role === 'student');
                 let teacherList = userList.filter(o => o.role === 'teacher');
+                let thisClassroomTeaList = teacherList.filter(o => this.state.listTeacherIDs.includes(o.id));
+                let thisClassroomStuList = studentList.filter(o => this.state.listStudentIDs.includes(o.id));
 
-                let fixedStudentList = studentList.map((st, index) => {
+
+                let student_options = [];
+                studentList.map((st, index) => {
+                    student_options.push({
+                        value: st.id.toString(),
+                        label: st.name
+                    })
+                })
+                let student_selected = [];
+                // console.log(this.state.listStudentIDs)
+                this.state.listStudentIDs.map((st, index) => {
+                    student_selected.push(st.toString());
+                });
+
+                let teacher_options = [];
+                teacherList.map((tc, index) => {
+                    teacher_options.push({
+                        value: tc.id.toString(),
+                        label: tc.name
+                    })
+                })
+                let teacher_selected = [];
+                this.state.listTeacherIDs.map((tc, index) => {
+                    teacher_selected.push(tc.toString());
+                });
+
+                let fixedStudentList = thisClassroomStuList.map((st, index) => {
                     return {
                         name: st.name,
                         email: st.email,
                         phone: st.phone
                     }
                 })
-                let fixedTeacherList = teacherList.map((st, index) => {
+                let fixedTeacherList = thisClassroomTeaList.map((st, index) => {
                     return {
                         name: st.name,
                         email: st.email,
@@ -203,7 +229,11 @@ class ClassDetail extends Component {
                 })
                 this.setState({
                     listStudentData: fixedStudentList,
-                    listTeacherData: fixedTeacherList
+                    listTeacherData: fixedTeacherList,
+                    teacher_options,
+                    teacher_selected,
+                    student_options,
+                    student_selected,
                 })
             })
             .catch(err => {
@@ -216,10 +246,10 @@ class ClassDetail extends Component {
             }
         })
             .then((response) => {
-                
+
                 let timetableList = response.data.slice();
-                let timetableData = timetableList.filter(o => this.state.listTimetableIDs.includes(o.id) );
-                
+                let timetableData = timetableList.filter(o => this.state.listTimetableIDs.includes(o.id));
+
                 this.setState({
                     timetableData
                 })
@@ -277,6 +307,7 @@ class ClassDetail extends Component {
             });
         });
 
+        await this.setState({ isLoading: false });
     }
 
 
@@ -336,6 +367,41 @@ class ClassDetail extends Component {
         this.setState({
             alert: null
         });
+    }
+
+    handleEditBtn = () => {
+        this.setState({ isEdit: true });
+    }
+
+    handleSaveBtn = async () => {
+        let url = "https://api-english-academy.herokuapp.com/class-rooms/" + this.state.id;
+        let list_students = this.state.student_selected.map((el, index) => {
+            return parseInt(el);
+        });
+
+        let list_teachers = this.state.teacher_selected.map((el, index) => {
+            return parseInt(el);
+        })
+        console.log(this.state.courseData_id)
+        let newClassroomData = {
+            name: this.state.classroomName,
+            course_id: this.state.courses_selecting.value,
+            list_students,
+            list_teachers
+        }
+
+        await axios.put(url, newClassroomData).then(res => {
+
+        }).catch(err => {
+            alert(err.message)
+        });
+        await this.fetchData();
+        await this.setState({ isEdit: false });
+    }
+
+    handleHuyBtn = async () => {
+        await this.fetchData();
+        await this.setState({ isEdit: false });
     }
 
     render() {
@@ -433,10 +499,10 @@ class ClassDetail extends Component {
                                 <h1>Constructing...</h1>
                                 {
                                     this.state.timetableData.map((ele, index) => {
-                                        return <p>{ele.id}  {ele.weekday}  {ele.start_time}  {ele.end_time}</p>
+                                        return <p key={ index }>{ ele.id }  { ele.weekday }  { ele.start_time }  { ele.end_time }</p>
                                     })
                                 }
-                                
+
                                 <Card
                                     calendar
                                     content={
@@ -491,7 +557,7 @@ class ClassDetail extends Component {
                                                                 <FormControl
                                                                     type="text"
                                                                     value={ this.state.classroomName }
-                                                                    onChange={ (event) => this.setState({ tenLop: event.target.value }) }
+                                                                    onChange={ (event) => this.setState({ classroomName: event.target.value }) }
                                                                     disabled={ !this.state.isEdit }
                                                                 />
                                                             </Col>
@@ -501,10 +567,17 @@ class ClassDetail extends Component {
                                                                 Khóa học
                                                             </ControlLabel>
                                                             <Col md={ 4 }>
-                                                                <FormControl
+                                                                {/* <FormControl
                                                                     type="text"
                                                                     value={ this.state.courseData_name }
-                                                                    onChange={ (event) => this.setState({ tenKhoaHoc: event.target.value }) }
+                                                                    onChange={ (event) => this.setState({ courseData_name: event.target.value }) }
+                                                                    disabled={ !this.state.isEdit }
+                                                                /> */}
+                                                                <Select
+                                                                    placeholder="Khóa học"
+                                                                    value={ this.state.courses_selecting }
+                                                                    options={ this.state.courses_select_options }
+                                                                    onChange={ (value) => this.setState({ courses_selecting: value }) }
                                                                     disabled={ !this.state.isEdit }
                                                                 />
                                                             </Col>
@@ -513,27 +586,68 @@ class ClassDetail extends Component {
                                                             <ControlLabel className="col-md-2" >
                                                                 Giảng viên
                                                             </ControlLabel>
-                                                            <Col md={ 4 }>
+                                                            <Col md={ 10 }>
                                                                 <Col md={ 9 } style={ { padding: "10px 12px" } }>
                                                                     {
-                                                                        this.state.listTeacherData.map((gv, index) => {
-                                                                            if (index !== this.state.danhSachGiangVien.length - 1)
-                                                                                return (<Link to="#" key={ index }>{ gv.name }, </Link>)
-                                                                            else return (<Link to="#" key={ index }>{ gv.name }</Link>)
-                                                                        })
+                                                                        !this.state.isEdit ?
+                                                                            this.state.listTeacherData.map((gv, index) => {
+                                                                                if (index !== this.state.danhSachGiangVien.length - 1)
+                                                                                    return (<Link to="#" key={ index }>{ gv.name }, </Link>)
+                                                                                else return (<Link to="#" key={ index }>{ gv.name }</Link>)
+                                                                            }) :
+                                                                            <DualListBox
+                                                                                options={ this.state.teacher_options }
+                                                                                selected={ this.state.teacher_selected }
+                                                                                onChange={ (teacher_selected) => {
+                                                                                    this.setState({ teacher_selected });
+                                                                                } }
+                                                                            />
                                                                     }
                                                                 </Col>
                                                             </Col>
                                                         </FormGroup>
-                                                        <FormGroup>
-                                                            <Col md={ 10 } mdOffset={ 1 }>
-                                                                <Card
-                                                                    title="Quản lý"
-                                                                    ctFullWidth
-                                                                    content={ tabsIcons }
-                                                                />
-                                                            </Col>
-                                                        </FormGroup>
+                                                        {
+                                                            !this.state.isEdit ?
+                                                                <FormGroup>
+                                                                    <Col md={ 10 } mdOffset={ 1 }>
+                                                                        <Card
+                                                                            title="Quản lý"
+                                                                            ctFullWidth
+                                                                            content={ tabsIcons }
+                                                                        />
+                                                                    </Col>
+                                                                </FormGroup>
+                                                                :
+                                                                <FormGroup>
+                                                                    <ControlLabel className="col-md-2" >
+                                                                        Học sinh
+                                                                    </ControlLabel>
+                                                                    <Col md={ 10 }>
+                                                                        <Col md={ 9 } style={ { padding: "10px 12px" } }>
+
+                                                                            <DualListBox
+                                                                                options={ this.state.student_options }
+                                                                                selected={ this.state.student_selected }
+                                                                                onChange={ (student_selected) => {
+                                                                                    this.setState({ student_selected });
+                                                                                } }
+                                                                            />
+
+                                                                        </Col>
+                                                                    </Col>
+                                                                </FormGroup>
+                                                        }
+
+                                                        {
+                                                            !this.state.isEdit ? <Button className="primary" onClick={ this.handleEditBtn }>Chỉnh sửa</Button> :
+                                                                (
+                                                                    <div>
+                                                                        <Button className="primary" onClick={ this.handleSaveBtn }>Lưu</Button>
+                                                                        <Button className="primary" onClick={ this.handleHuyBtn }>Hủy bỏ</Button>
+                                                                    </div>
+                                                                )
+                                                        }
+
                                                     </Form>
                                                 )
                                         }

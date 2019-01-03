@@ -22,10 +22,10 @@ class CourseDetailModal extends Component {
         super(props);
         this.state = {
             courseData: {
-                id: null,
+                id: "",
                 ten: "",
-                hocPhi: null,
-                thoiGianHoc: null,
+                hocPhi: "",
+                thoiGianHoc: "",
                 danhSachLopHoc: []
             },
             isEdit: false,
@@ -48,7 +48,7 @@ class CourseDetailModal extends Component {
         axios.get("https://api-english-academy.herokuapp.com/class-rooms").then(response2 => {
             response2.data.map((cl, index) => {
                 let dataa = response2.data.slice();
-                dataa = dataa.filter(o => o.course_id == 0);
+                dataa = dataa.filter(o => o.course_id === null);
                 let newOptions = dataa.map((cl, index) => {
                     return {
                         value: cl.id.toString(),
@@ -104,25 +104,36 @@ class CourseDetailModal extends Component {
     onUpdate = () => {
         let url = "https://api-english-academy.herokuapp.com/courses/" + this.props.courseId;
         // console.log(url);
+        // console.log(this.state.selected);
+
+        let listClass = this.state.selected.map((el, index) => {
+            return parseInt(el)
+        })
+
+        // console.log(listClass);
+        // return;
         let newCourseData = {
             name: this.state.courseData.ten,
             fee: parseInt(this.state.courseData.hocPhi),
-            duration: parseInt(this.state.courseData.thoiGianHoc)
+            duration: parseInt(this.state.courseData.thoiGianHoc),
             //update list class
+            list_class_ids: listClass
             
         };
+        
         this.setState({ isLoading: true });
 
         const headers = {
             'Content-Type': 'application/json',
         };
         axios.put(url, newCourseData, { headers: headers }).then(response => {
-            console.log(response.data);
+            // console.log(response.data);
         }).catch(err => {
             console.log(err.message);
         })
         this.fetchData();
         this.setState({ isLoading: false, isEdit: false })
+        this.props.handleClose();
     }
 
     handleCancelBtnClick = () => {

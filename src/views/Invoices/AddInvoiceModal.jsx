@@ -32,12 +32,13 @@ class AddInvoiceModal extends Component {
 
     resetData = () => {
         this.setState({
-            id: "",
+            name: "",
             admin_name: "",
             target_name: "",
             amount: "",
             taibu: "",
             date: "",
+            naiyou: "",
         })
     }
 
