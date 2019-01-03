@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
 import axios from 'axios';
 import {
     Grid, Row, Col
@@ -10,20 +9,16 @@ import Button from 'elements/CustomButton/CustomButton.jsx';
 import ReactLoading from 'react-loading';
 import SweetAlert from 'react-bootstrap-sweetalert';
 
-import Datetime from 'react-datetime';
 import $ from 'jquery';
 
-import * as actions from '../../reduxStore/actions/actionsIndex';
 import Card from 'components/Card/Card.jsx';
 
-// import CourseDetailModal from './CourseDetailModal';
 import AddInvoiceModal from './AddInvoiceModal';
 
 import ReactExport from "react-data-export";
 
 const ExcelFile = ReactExport.ExcelFile;
 const ExcelSheet = ReactExport.ExcelFile.ExcelSheet;
-const ExcelColumn = ReactExport.ExcelFile.ExcelColumn;
 
 // DataTables.net plugin - creates a tables with actions on it
 require('datatables.net-responsive');
@@ -63,7 +58,7 @@ class ManageInvoice extends Component {
 
     handleCloseAddModal = () => {
         this.setState({ showInvoiceAddModal: false });
-        console.log("foooo");
+        
         this.fetchData();
     }
 
@@ -147,10 +142,11 @@ class ManageInvoice extends Component {
         this.fetchData()
     }
 
-    fetchData = () => {
+    fetchData = async () => {
         let url = "https://api-english-academy.herokuapp.com/invoices";
+        await this.setState({isLoading: true})
 
-        axios.get(url)
+        await axios.get(url)
             .then(response => {
                 let newTableData = { ...this.state.tableData };
                 newTableData.data = response.data.tableData.data.map((row, index) => {
@@ -164,64 +160,64 @@ class ManageInvoice extends Component {
                     }
                 });
 
-                let newRawTableData = {...this.state.rawTableData}
+                let newRawTableData = { ...this.state.rawTableData }
                 newRawTableData.data = response.data.tableData.data;
                 this.setState({ tableData: newTableData, isLoading: false, rawTableData: newRawTableData });
-
-                $("#datatables").DataTable({
-                    "pagingType": "full_numbers",
-                    "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
-                    // "searching": false,
-                    // "ordering": false,
-                    "order": [[0, "desc"]],
-                    retrieve: true,
-                    responsive: true,
-                    language: {
-                        "decimal": "",
-                        "emptyTable": "Không có dữ liệu",
-                        "info": "Đang hiển thị từ _START_ đến _END_ trong tổng cộng _TOTAL_ mục",
-                        "infoEmpty": "Đang hiển thị từ 0 đến 0 trong tổng cộng 0 mục",
-                        "infoFiltered": "đã lọc tổng cộng _MAX_ mục)",
-                        "infoPostFix": "",
-                        "thousands": ",",
-                        "lengthMenu": "Hiển thị _MENU_ mục",
-                        "loadingRecords": "Đang load...",
-                        "processing": "Đang xử lý...",
-                        "zeroRecords": "Không tìm thấy mục nào",
-                        "paginate": {
-                            "first": "Trang đầu",
-                            "last": "Trang cuối",
-                            "next": "Trang tiếp",
-                            "previous": "Trang trước"
-                        },
-                        search: "_INPUT_",
-                        searchPlaceholder: "Tìm kiếm tất cả",
-                    }
-                });
-                var table = $('#datatables').DataTable();
-
-                $('#datatables tfoot th').each(function () {
-                    var title = $(this).text();
-                    if (title !== '') $(this).html('<input id="" type="text" placeholder="Tìm theo ' + title + '" />');
-                });
-
-                table.columns().every(function () {
-                    var that = this;
-                    $('input', this.footer()).on('keyup change', function () {
-                        if (that.search() !== this.value) {
-                            that
-                                .search(this.value)
-                                .draw();
-                        }
-                    });
-                });
 
             })
             .catch(err => {
                 alert("Co loi xay ra roi !");
 
             })
+        await $("#datatables").DataTable({
+            "pagingType": "full_numbers",
+            "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "Tất cả"]],
+            // "searching": false,
+            // "ordering": false,
+            "order": [[0, "desc"]],
+            retrieve: true,
+            responsive: true,
+            language: {
+                "decimal": "",
+                "emptyTable": "Không có dữ liệu",
+                "info": "Đang hiển thị từ _START_ đến _END_ trong tổng cộng _TOTAL_ mục",
+                "infoEmpty": "Đang hiển thị từ 0 đến 0 trong tổng cộng 0 mục",
+                "infoFiltered": "đã lọc tổng cộng _MAX_ mục)",
+                "infoPostFix": "",
+                "thousands": ",",
+                "lengthMenu": "Hiển thị _MENU_ mục",
+                "loadingRecords": "Đang load...",
+                "processing": "Đang xử lý...",
+                "zeroRecords": "Không tìm thấy mục nào",
+                "paginate": {
+                    "first": "Trang đầu",
+                    "last": "Trang cuối",
+                    "next": "Trang tiếp",
+                    "previous": "Trang trước"
+                },
+                search: "_INPUT_",
+                searchPlaceholder: "Tìm kiếm tất cả",
+            }
+        });
+        var table = $('#datatables').DataTable();
 
+        $('#datatables tfoot th').each(function () {
+            var title = $(this).text();
+            if (title !== '') $(this).html('<input id="" type="text" placeholder="Tìm theo ' + title + '" />');
+        });
+
+        table.columns().every(function () {
+            var that = this;
+            $('input', this.footer()).on('keyup change', function () {
+                if (that.search() !== this.value) {
+                    that
+                        .search(this.value)
+                        .draw();
+                }
+            });
+        });
+
+        await this.setState({isLoading: false})
     }
 
 
@@ -270,7 +266,7 @@ class ManageInvoice extends Component {
 
     downLoadExcel = (invoiceID) => {
         let data = this.state.rawTableData.data.find(o => o.id === invoiceID);
-        console.log(data)
+        
         if (data === undefined) return null;
         const multiDataSet = [
             {
@@ -349,9 +345,9 @@ class ManageInvoice extends Component {
         ];
 
         return <ExcelFile element={ <a className="btn btn-simple btn-info btn-icon" ><i className="glyphicon glyphicon-download-alt"></i></a> }>
-                <ExcelSheet dataSet={ multiDataSet } name="Organization" />
-            </ExcelFile>
-        
+            <ExcelSheet dataSet={ multiDataSet } name="Organization" />
+        </ExcelFile>
+
 
     }
 
@@ -419,7 +415,7 @@ class ManageInvoice extends Component {
                                                                         }
                                                                         <td className="text-right">
                                                                             { this.downLoadExcel(prop[0]) }
-                                                                            <a className="btn btn-simple btn-info btn-icon" ><i className="glyphicon glyphicon-folder-open"></i></a>
+                                                                            {/* <a className="btn btn-simple btn-info btn-icon" ><i className="glyphicon glyphicon-folder-open"></i></a> */}
                                                                             <a className="btn btn-simple btn-danger btn-icon remove" onClick={ () => this.onDelete(prop[0]) }><i className="fa fa-times" ></i></a>
                                                                         </td>
                                                                     </tr>

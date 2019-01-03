@@ -39,18 +39,18 @@ class ManageUser extends Component {
         };
     }
 
-    handleCloseDetailModal = () => {
-        this.setState({ showUserDetailModal: false });
-        this.fetchData();
+    handleCloseDetailModal = async () => {
+        await this.setState({ showUserDetailModal: false });
+        await this.fetchData();
     }
 
     handleShowUserModal = (userId) => {
         this.setState({ showUserDetailModal: true, showingUserId: userId });
     }
 
-    handleCloseAddModal = () => {
-        this.setState({ showUserAddModal: false });
-        this.fetchData();
+    handleCloseAddModal = async () => {
+        await this.setState({ showUserAddModal: false });
+        await this.fetchData();
     }
 
     handleShowAddModal = (userId) => {
@@ -134,11 +134,11 @@ class ManageUser extends Component {
         this.fetchData()
     }
 
-    fetchData = () => {
+    fetchData = async () => {
         const auth_token = localStorage.getItem('token');
 
         let url = "https://api-english-academy.herokuapp.com/users";
-        axios.get(url, {
+        await axios.get(url, {
             headers: {
                 Authorization: 'Bearer ' + auth_token
             }

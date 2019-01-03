@@ -110,6 +110,7 @@ class DataTables extends Component {
                         .draw();
                 }
             });
+            return true;
         });
 
         // Edit record
@@ -186,9 +187,9 @@ class DataTables extends Component {
                                                                     })
                                                                 }
                                                                 <td className="text-right">
-                                                                    <a className="btn btn-simple btn-info btn-icon like"><i className="fa fa-heart"></i></a>
-                                                                    <a className="btn btn-simple btn-warning btn-icon edit"><i className="fa fa-edit"></i></a>
-                                                                    <a className="btn btn-simple btn-danger btn-icon remove"><i className="fa fa-times"></i></a>
+                                                                    <a className="btn btn-simple btn-info btn-icon like" href="#"><i className="fa fa-heart"></i></a>
+                                                                    <a className="btn btn-simple btn-warning btn-icon edit" href="#"><i className="fa fa-edit"></i></a>
+                                                                    <a className="btn btn-simple btn-danger btn-icon remove" href="#"><i className="fa fa-times"></i></a>
                                                                 </td>
                                                             </tr>
                                                         )
